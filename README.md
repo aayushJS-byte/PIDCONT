@@ -1,77 +1,142 @@
-# AI Control System Dashboard
+# ⚙️ PID Control System Dashboard
 
-A production-grade closed-loop control simulator with PID and AI controllers,
-built directly from the theory in *Linear Closed-Loop Systems* (pages 171–177).
+An interactive engineering dashboard for simulating and analyzing **closed-loop control systems** using PID controllers.
 
-## What it does
+This project bridges **Chemical Engineering control theory** with **modern interactive visualization**, enabling real-time experimentation with system dynamics, controller tuning, and performance evaluation.
 
-Simulates the full feedback control loop:
+---
 
-```
-y_sp → [Comparator] → [Controller g_c(s)] → [Process g_p(s)] → y
-              ↑                                        |
-              └──────── [Sensor g_m(s)] ←─────────────┘
-                              d(s) disturbance ↑
-```
+## 🧠 Theoretical Background
 
-Two controller modes:
-- **PID** — classic industry-standard, manually tuned
-- **AI Neural Controller** — learned via Evolution Strategies, outperforms PID on complex processes
+A standard closed-loop control system is defined as:
 
-Two control scenarios (from page 177):
-- **Servo problem** — setpoint changes, no disturbance
-- **Regulator problem** — setpoint fixed, disturbance enters
+y_sp → Comparator → Controller → Process → Output (y)  
+                                             ↑  
+                                      Feedback (y_m)  
 
-## Quick start
+Where:
 
-```bash
-# 1. Clone / download the project
-cd ai_control_dashboard
+- **y_sp(t)** = setpoint  
+- **y(t)** = process output  
+- **y_m(t)** = measured output  
+- **e(t)** = error = y_sp(t) − y_m(t)  
 
-# 2. Install dependencies
-pip install -r requirements.txt
+---
 
-# 3. Run tests (optional but recommended)
-pytest tests/ -v
+### 📌 Core Equations
 
-# 4. Launch dashboard (ALWAYS run from project root)
-streamlit run dashboard/app.py
-```
+Error:
+e(t) = y_sp(t) − y_m(t)
 
-## Project structure
+PID Controller:
+u(t) = Kc [ e(t) + (1/τI) ∫ e(t) dt + τD (de/dt) ]
 
-```
-ai_control_dashboard/
-├── core/
-│   ├── process.py       # g_p(s) — FirstOrderProcess, SecondOrderProcess
-│   ├── controllers.py   # g_c(s) — PIDController, NeuralController
-│   ├── simulator.py     # closed-loop runner (implements eq.5, page 175)
-│   └── metrics.py       # ISE, IAE, ITAE, overshoot, settling time
-├── ai/
-│   └── trainer.py       # Evolution Strategies training loop
-├── dashboard/
-│   └── app.py           # Streamlit UI
-├── tests/
-│   └── test_simulator.py
-└── requirements.txt
-```
+Process (example first-order):
+τ dy/dt + y = K u(t)
 
-## Using the AI controller
+Closed-loop transfer function:
+Y(s)/Y_sp(s) = Gc(s)Gp(s) / [1 + Gc(s)Gp(s)]
 
-1. Open the sidebar → section ② Controller
-2. Select "AI Neural Controller"
-3. Set training iterations (200 is a good start)
-4. Click "Train AI Controller" — takes ~30 seconds
-5. Switch between PID and AI to compare on the side-by-side plot
+---
 
-## Theory reference
+## 🚀 Features
 
-| Equation | Location | Implementation |
-|----------|----------|----------------|
-| y(s) = g_p·m(s) + g_d·d(s) | Page 171, eq.1 | `process.step()` |
-| y_m(s) = g_m·y(s) | Page 171, eq.2 | `run_simulation()` |
-| ε(s) = y_sp - y_m | Page 172, eq.3 | `run_simulation()` |
-| c'(s) = g_c·ε(s) | Page 172, eq.4 | `controller.compute()` |
-| Closed-loop eq. (5) | Page 175 | `run_simulation()` full loop |
-| Servo problem | Page 177, C1 | "Servo" scenario |
-| Regulator problem | Page 177, C2 | "Regulator" scenario |# PIDCONT
+### 🔧 Process Models
+- First-order systems (FOPDT-style)
+- Second-order systems
+- Disturbance modeling
+- Adjustable gain, time constant, damping
+
+---
+
+### 🎛️ PID Controller
+- Manual tuning (Kc, τI, τD)
+- Ziegler–Nichols tuning
+- Real-time parameter control
+
+---
+
+### ⚡ Control Scenarios
+- Servo (setpoint tracking)
+- Regulator (disturbance rejection)
+- Combined mode
+
+---
+
+### 📊 Visualization
+- Output response y(t)
+- Control signal u(t)
+- Error signal e(t)
+- Setpoint tracking
+
+---
+
+### 📈 Performance Metrics
+
+Integral Square Error (ISE):
+ISE = ∫ e²(t) dt
+
+Overshoot:
+OS% = (y_max − y_ss)/y_ss × 100
+
+Settling Time:
+Time required for output to remain within tolerance band
+
+Steady-State Error:
+e_ss = |y_sp − y|
+
+---
+
+### 🔍 Comparison Mode
+- Manual vs Ziegler–Nichols tuning
+- Performance comparison
+- Best controller identification
+
+---
+
+### 📤 Export
+- Download plots (PNG / PDF)
+- Export simulation results (JSON)
+
+---
+
+## 🛠️ Tech Stack
+
+- Python  
+- Streamlit  
+- Plotly  
+- NumPy  
+
+---
+
+## ▶️ How to Run
+
+git clone https://github.com/aayushJS-byte/PIDCONT.git  
+cd PIDCONT  
+pip install -r requirements.txt  
+streamlit run dashboard/app.py  
+
+---
+
+## 📂 Project Structure
+
+PIDCONT/  
+├── core/  
+├── dashboard/  
+├── requirements.txt  
+└── README.md  
+
+---
+
+## 🎯 Future Work
+
+- IMC tuning  
+- MPC controller  
+- Adaptive PID  
+- Chemical reactor models  
+
+---
+
+## ⭐
+
+If you found this useful, consider starring the repo!
